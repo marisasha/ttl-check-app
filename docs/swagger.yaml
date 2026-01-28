@@ -1,0 +1,154 @@
+basePath: /
+definitions:
+  ttlchecker.Certificate:
+    properties:
+      url:
+        type: string
+      user_id:
+        type: integer
+      valid_from:
+        type: string
+      valid_to:
+        type: string
+    type: object
+  ttlchecker.User:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: support@ttl-checker.com
+    name: API Support
+  description: API для проверки TTL сертификатов
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: TTL Checker API
+  version: "1.0"
+paths:
+  /api/certificates:
+    get:
+      consumes:
+      - application/json
+      description: Просмотр всех сертификатов
+      operationId: get-all-certificates
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Просмотр сертификатов
+      tags:
+      - certificate
+    post:
+      consumes:
+      - application/json
+      description: Добавление нового сертификата
+      operationId: add-certificate
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/ttlchecker.Certificate'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление сертификата
+      tags:
+      - certificate
+  /api/certificates/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Просмотр сертификата по id
+      operationId: get-certificate
+      parameters:
+      - description: ID сертификата
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление сертификата
+      tags:
+      - certificate
+    get:
+      consumes:
+      - application/json
+      description: Просмотр сертификата по id
+      operationId: get-certificate
+      parameters:
+      - description: ID сертификата
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Просмотр сертификата
+      tags:
+      - certificate
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Проверка прав пользователя
+      operationId: sign-in
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/ttlchecker.User'
+      produces:
+      - application/json
+      responses: {}
+      summary: Аутентификация пользователя
+      tags:
+      - auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Создание нового пользователя
+      operationId: sign-up
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/ttlchecker.User'
+      produces:
+      - application/json
+      responses: {}
+      summary: Регистрация пользователя
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    description: 'Введите: Bearer {token}'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
