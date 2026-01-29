@@ -43,7 +43,9 @@ const docTemplate = `{
                 "summary": "Просмотр сертификатов",
                 "operationId": "get-all-certificates",
                 "responses": {}
-            },
+            }
+        },
+        "/api/certificates/add": {
             "post": {
                 "security": [
                     {
@@ -69,7 +71,40 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ttlchecker.Certificate"
+                            "$ref": "#/definitions/handler.AddCertificateRequest"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/certificates/check": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Проверка сертификата",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "certificate"
+                ],
+                "summary": "Проверка сертификата",
+                "operationId": "check-certificate",
+                "parameters": [
+                    {
+                        "description": "URL для проверки",
+                        "name": "url",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.checkCertificateInfoRequest"
                         }
                     }
                 ],
@@ -194,19 +229,24 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "ttlchecker.Certificate": {
+        "handler.AddCertificateRequest": {
             "type": "object",
+            "required": [
+                "url"
+            ],
             "properties": {
                 "url": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                },
-                "valid_from": {
-                    "type": "string"
-                },
-                "valid_to": {
+                }
+            }
+        },
+        "handler.checkCertificateInfoRequest": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
                     "type": "string"
                 }
             }

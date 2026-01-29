@@ -8,43 +8,50 @@ import (
 	ttlchecker "github.com/marisasha/ttl-check-app"
 )
 
-// @Summary Добавление сертификата
+type AddCertificateRequest struct {
+	Url string `json:"url" binding:"required,url"`
+}
+
+// @Summary Добавление отслеживаемого сертификата
 // @Tags certificate
 // @Description Добавление нового сертификата
 // @ID add-certificate
 // @Accept json
 // @Produce json
-// @Param input body ttlchecker.Certificate true "Данные пользователя"
+// @Param input body AddCertificateRequest true "Данные пользователя"
 // @Security ApiKeyAuth
-// @Router /api/certificates [post]
+// @Router /api/certificates/add [post]
 func (h *Handler) addCertificate(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
 
-	var input ttlchecker.Certificate
+	var input AddCertificateRequest
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	input.UserId = userId
+	newCertificate := &ttlchecker.Certificate{
+		UserId: userId,
+		Url:    input.Url,
+	}
 
-	id, err := h.services.Certificate.AddCertificate(input)
+	err = h.services.Certificate.AddCertificate(newCertificate)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]interface{}{
-		"id": id,
+	c.JSON(http.StatusCreated, map[string]string{
+		"message": "URL successfully added !",
 	})
 
 }
 
 type getAllCertificatesResponse struct {
-	Data []ttlchecker.Certificate `json:"data"`
+	Data []ttlchecker.CertificateResponse `json:"data"`
 }
 
 // @Summary Просмотр сертификатов
@@ -68,13 +75,13 @@ func (h *Handler) getAllCertificates(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusAccepted, getAllCertificatesResponse{
-		Data: certificates,
+		Data: *certificates,
 	})
 
 }
 
 type getCertificateResponse struct {
-	Data ttlchecker.Certificate `json:"data"`
+	Data ttlchecker.CertificateResponse `json:"data"`
 }
 
 // @Summary Просмотр сертификата
@@ -100,7 +107,7 @@ func (h *Handler) getCertificate(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusAccepted, getCertificateResponse{
-		Data: certificate,
+		Data: *certificate,
 	})
 
 }
@@ -118,12 +125,47 @@ func (h *Handler) deleteCertificate(c *gin.Context) {
 	certificateId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "no id param")
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
 	}
 
 	err = h.services.Certificate.DeleteCertificate(certificateId)
 
 	c.JSON(http.StatusAccepted, map[string]string{
-		"message": "certificate succusfule delete",
+		"message": "certificate successfully delete !",
+	})
+}
+
+type checkCertificateInfoRequest struct {
+	Url string `json:"url" binding:"required,url"`
+}
+type checkCetrificateInfoResponse struct {
+	Data ttlchecker.CertificateInfo `json:"data"`
+}
+
+// @Summary Проверка сертификата
+// @Tags certificate
+// @Description Проверка сертификата
+// @ID check-certificate
+// @Accept json
+// @Produce json
+// @Param url body checkCertificateInfoRequest true
+// @Security ApiKeyAuth
+// @Router /api/certificates/check [post]
+func (h *Handler) checkCertificate(c *gin.Context) {
+	var input checkCertificateInfoRequest
+
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	certificateInfo, err := h.services.Certificate.CheckCertificate(input.Url)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusAccepted, checkCetrificateInfoResponse{
+		Data: *certificateInfo,
 	})
 }

@@ -30,7 +30,7 @@ func NewAuthService(repos repository.Authorization) *AuthService {
 	return &AuthService{repos: repos}
 }
 
-func (s *AuthService) CreateUser(user ttlchecker.User) (int, error) {
+func (s *AuthService) CreateUser(user *ttlchecker.User) (int, error) {
 	user.Password = generatePasswordHash(user.Password)
 	return s.repos.CreateUser(user)
 }

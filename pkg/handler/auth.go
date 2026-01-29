@@ -23,7 +23,7 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	id, err := h.services.Authorization.CreateUser(input)
+	id, err := h.services.Authorization.CreateUser(&input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

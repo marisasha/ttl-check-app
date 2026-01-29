@@ -31,9 +31,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		certificates := api.Group("/certificates")
 		{
-			certificates.POST("/", h.addCertificate)
 			certificates.GET("/", h.getAllCertificates)
 			certificates.GET("/:id", h.getCertificate)
+			certificates.POST("/add", h.addCertificate)
+			certificates.POST("/check", h.checkCertificate)
 			certificates.DELETE("/:id", h.deleteCertificate)
 		}
 	}

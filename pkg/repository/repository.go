@@ -6,14 +6,14 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user ttlchecker.User) (int, error)
+	CreateUser(user *ttlchecker.User) (int, error)
 	GetUser(username, password string) (ttlchecker.User, error)
 }
 
 type Certificate interface {
-	AddCertificate(certificate ttlchecker.Certificate) (int, error)
-	GetAllCertificates(userId int) ([]ttlchecker.Certificate, error)
-	GetCertificateById(certificateId int) (ttlchecker.Certificate, error)
+	GetAllCertificates(userId int) (*[]ttlchecker.Certificate, error)
+	GetCertificateById(certificateId int) (*ttlchecker.Certificate, error)
+	AddCertificate(certificate *ttlchecker.Certificate) error
 	DeleteCertificate(certificateId int) error
 }
 

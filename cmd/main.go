@@ -3,7 +3,6 @@ package main
 import (
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	ttlchecker "github.com/marisasha/ttl-check-app"
 	"github.com/marisasha/ttl-check-app/pkg/handler"
@@ -38,15 +37,16 @@ func main() {
 		logrus.Fatalf("error with initializing configs: %s", err.Error())
 	}
 
-	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("error with loading .env: %s", err.Error())
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	logrus.Fatalf("error with loading .env: %s", err.Error())
+	// }
+
 	db, err := repository.NewPostgresDB(repository.Config{
-		Host:     viper.GetString("db.host"),
-		Port:     viper.GetString("db.port"),
-		Username: viper.GetString("db.username"),
-		DBName:   viper.GetString("db.dbname"),
-		SSLMode:  viper.GetString("db.sslmode"),
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		Username: os.Getenv("DB_USERNAME"),
+		DBName:   os.Getenv("DB_NAME"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
 		Password: os.Getenv("DB_PASSWORD"),
 	})
 

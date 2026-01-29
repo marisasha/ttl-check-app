@@ -6,16 +6,17 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user ttlchecker.User) (int, error)
+	CreateUser(user *ttlchecker.User) (int, error)
 	GenerateToken(username, password string) (string, error)
 	ParseToken(token string) (int, error)
 }
 
 type Certificate interface {
-	AddCertificate(certificate ttlchecker.Certificate) (int, error)
-	GetAllCertificates(userId int) ([]ttlchecker.Certificate, error)
-	GetCertificateById(certificateId int) (ttlchecker.Certificate, error)
+	GetAllCertificates(userId int) (*[]ttlchecker.CertificateResponse, error)
+	GetCertificateById(certificateId int) (*ttlchecker.CertificateResponse, error)
+	AddCertificate(certificate *ttlchecker.Certificate) error
 	DeleteCertificate(certificateId int) error
+	CheckCertificate(inputUrl string) (*ttlchecker.CertificateInfo, error)
 }
 
 type Service struct {

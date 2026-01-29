@@ -15,36 +15,35 @@ func NewCertificatePostgres(db *sqlx.DB) *CertificatePostgres {
 	return &CertificatePostgres{db: db}
 }
 
-func (r *CertificatePostgres) AddCertificate(certificate ttlchecker.Certificate) (int, error) {
-	var id int
-	query := fmt.Sprintf("INSERT INTO %s (user_id,url,valid_from,valid_to) VALUES ($1, $2, $3, $4) RETURNING id", certificatesTable)
-	row := r.db.QueryRow(query, certificate.UserId, certificate.Url, certificate.ValidFrom, certificate.ValidTo)
-	if err := row.Scan(&id); err != nil {
-		return 0, nil
-	}
+func (r *CertificatePostgres) AddCertificate(certificate *ttlchecker.Certificate) error {
 
-	return id, nil
+	query := fmt.Sprintf("INSERT INTO %s (user_id,url,valid_from,valid_to) VALUES ($1, $2, $3, $4)", certificatesTable)
+	_, err := r.db.Exec(query, certificate.UserId, certificate.Url, certificate.ValidFrom, certificate.ValidTo)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (r *CertificatePostgres) GetAllCertificates(userId int) ([]ttlchecker.Certificate, error) {
+func (r *CertificatePostgres) GetAllCertificates(userId int) (*[]ttlchecker.Certificate, error) {
 
 	var certificates []ttlchecker.Certificate
 
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1", certificatesTable)
 	err := r.db.Select(&certificates, query, userId)
 
-	return certificates, err
+	return &certificates, err
 
 }
 
-func (r *CertificatePostgres) GetCertificateById(certificateId int) (ttlchecker.Certificate, error) {
+func (r *CertificatePostgres) GetCertificateById(certificateId int) (*ttlchecker.Certificate, error) {
 
 	var certificates ttlchecker.Certificate
 
 	query := fmt.Sprintf("SELECT * FROM %s WHERE id=$1", certificatesTable)
 	err := r.db.Get(&certificates, query, certificateId)
 
-	return certificates, err
+	return &certificates, err
 
 }
 

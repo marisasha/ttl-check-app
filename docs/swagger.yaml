@@ -1,15 +1,18 @@
 basePath: /
 definitions:
-  ttlchecker.Certificate:
+  handler.AddCertificateRequest:
     properties:
       url:
         type: string
-      user_id:
-        type: integer
-      valid_from:
+    required:
+    - url
+    type: object
+  handler.checkCertificateInfoRequest:
+    properties:
+      url:
         type: string
-      valid_to:
-        type: string
+    required:
+    - url
     type: object
   ttlchecker.User:
     properties:
@@ -46,26 +49,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Просмотр сертификатов
-      tags:
-      - certificate
-    post:
-      consumes:
-      - application/json
-      description: Добавление нового сертификата
-      operationId: add-certificate
-      parameters:
-      - description: Данные пользователя
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/ttlchecker.Certificate'
-      produces:
-      - application/json
-      responses: {}
-      security:
-      - ApiKeyAuth: []
-      summary: Добавление сертификата
       tags:
       - certificate
   /api/certificates/{id}:
@@ -105,6 +88,48 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Просмотр сертификата
+      tags:
+      - certificate
+  /api/certificates/add:
+    post:
+      consumes:
+      - application/json
+      description: Добавление нового сертификата
+      operationId: add-certificate
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.AddCertificateRequest'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Добавление сертификата
+      tags:
+      - certificate
+  /api/certificates/check:
+    post:
+      consumes:
+      - application/json
+      description: Проверка сертификата
+      operationId: check-certificate
+      parameters:
+      - description: URL для проверки
+        in: body
+        name: url
+        required: true
+        schema:
+          $ref: '#/definitions/handler.checkCertificateInfoRequest'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Проверка сертификата
       tags:
       - certificate
   /auth/sign-in:
