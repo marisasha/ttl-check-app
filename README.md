@@ -12,21 +12,24 @@ REST API сервис для проверки срока действия (TTL) 
 # Run with Docker
 1. Создать файл `.env`
 
-```env
+```.env
 DB_USERNAME={ username }
 DB_PASSWORD={ password }
 DB_HOST={ host } //пользуйтесь db для Docker
 DB_PORT={ port }
 DB_NAME={ name }
 DB_SSLMODE={ sslmode }
+```
 
 2. Запустить проект
-
+```
 docker compose up --build
+```
 
-3.Использовать api
-
+3. Использовать api
+```
 http://localhost:8000/swagger/index.html
+```
 
 # Database Migrations
 
