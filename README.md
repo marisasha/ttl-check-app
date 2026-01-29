@@ -38,12 +38,12 @@ SQL-файлы находятся в папке: schema
 
 # Project Structure
 
-cmd // Точка входа (main.go)
-pkg // Бизнес-логика (handler, service, repository)
-schema // SQL миграции
-docs //  Swagger документация
-configs  //Конфигурационные файл
-Dockerfile
-docker-compose.yml
+- **cmd** — точка входа (main.go)  
+- **pkg** — бизнес-логика (handler, service, repository)  
+- **schema** — SQL миграции  
+- **docs** — Swagger документация  
+- **configs** — конфигурационные файлы  
+- **Dockerfile**  
+- **docker-compose.yml**
 
 
