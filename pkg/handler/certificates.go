@@ -12,13 +12,36 @@ type AddCertificateRequest struct {
 	Url string `json:"url" binding:"required,url"`
 }
 
-// @Summary Добавление отслеживаемого сертификата
-// @Tags certificate
-// @Description Добавление нового сертификата
+type getAllCertificatesResponse struct {
+	Data []ttlchecker.CertificateResponse `json:"data"`
+}
+
+type getCertificateResponse struct {
+	Data ttlchecker.CertificateResponse `json:"data"`
+}
+
+type checkCertificateInfoRequest struct {
+	Url string `json:"url" binding:"required,url"`
+}
+
+type checkCertificateInfoResponse struct {
+	Data ttlchecker.CertificateInfo `json:"data"`
+}
+
+//
+// ADD CERTIFICATE
+//
+
+// @Summary Добавить сертификат
+// @Tags certificates
+// @Description Добавляет новый сайт для отслеживания SSL сертификата
 // @ID add-certificate
 // @Accept json
 // @Produce json
-// @Param input body AddCertificateRequest true "Данные пользователя"
+// @Param request body AddCertificateRequest true "URL сайта"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
 // @Security ApiKeyAuth
 // @Router /api/certificates/add [post]
 func (h *Handler) addCertificate(c *gin.Context) {
@@ -38,28 +61,28 @@ func (h *Handler) addCertificate(c *gin.Context) {
 		Url:    input.Url,
 	}
 
-	err = h.services.Certificate.AddCertificate(newCertificate)
-	if err != nil {
+	if err := h.services.Certificate.AddCertificate(newCertificate); err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusCreated, map[string]string{
-		"message": "URL successfully added !",
+		"message": "URL successfully added!",
 	})
-
 }
 
-type getAllCertificatesResponse struct {
-	Data []ttlchecker.CertificateResponse `json:"data"`
-}
+//
+// GET ALL CERTIFICATES
+//
 
-// @Summary Просмотр сертификатов
-// @Tags certificate
-// @Description Просмотр всех сертификатов
+// @Summary Получить все сертификаты
+// @Tags certificates
+// @Description Возвращает список сертификатов пользователя
 // @ID get-all-certificates
 // @Accept json
 // @Produce json
+// @Success 200 {object} getAllCertificatesResponse
+// @Failure 500 {object} errorResponse
 // @Security ApiKeyAuth
 // @Router /api/certificates [get]
 func (h *Handler) getAllCertificates(c *gin.Context) {
@@ -74,81 +97,92 @@ func (h *Handler) getAllCertificates(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, getAllCertificatesResponse{
+	c.JSON(http.StatusOK, getAllCertificatesResponse{
 		Data: *certificates,
 	})
-
 }
 
-type getCertificateResponse struct {
-	Data ttlchecker.CertificateResponse `json:"data"`
-}
+//
+// GET ONE CERTIFICATE
+//
 
-// @Summary Просмотр сертификата
-// @Tags certificate
-// @Description Просмотр сертификата по id
+// @Summary Получить сертификат
+// @Tags certificates
+// @Description Возвращает сертификат по ID
 // @ID get-certificate
 // @Accept json
 // @Produce json
 // @Param id path int true "ID сертификата"
+// @Success 200 {object} getCertificateResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
 // @Security ApiKeyAuth
 // @Router /api/certificates/{id} [get]
 func (h *Handler) getCertificate(c *gin.Context) {
-
 	certificateId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
 	}
 
 	certificate, err := h.services.Certificate.GetCertificateById(certificateId)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusAccepted, getCertificateResponse{
+	c.JSON(http.StatusOK, getCertificateResponse{
 		Data: *certificate,
 	})
-
 }
 
-// @Summary Удаление сертификата
-// @Tags certificate
-// @Description Просмотр сертификата по id
-// @ID get-certificate
+//
+// DELETE CERTIFICATE
+//
+
+// @Summary Удалить сертификат
+// @Tags certificates
+// @Description Удаляет сертификат по ID
+// @ID delete-certificate
 // @Accept json
 // @Produce json
 // @Param id path int true "ID сертификата"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
 // @Security ApiKeyAuth
 // @Router /api/certificates/{id} [delete]
 func (h *Handler) deleteCertificate(c *gin.Context) {
 	certificateId, err := strconv.Atoi(c.Param("id"))
-
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
 	}
 
-	err = h.services.Certificate.DeleteCertificate(certificateId)
+	if err := h.services.Certificate.DeleteCertificate(certificateId); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-	c.JSON(http.StatusAccepted, map[string]string{
-		"message": "certificate successfully delete !",
+	c.JSON(http.StatusOK, map[string]string{
+		"message": "certificate successfully deleted!",
 	})
 }
 
-type checkCertificateInfoRequest struct {
-	Url string `json:"url" binding:"required,url"`
-}
-type checkCetrificateInfoResponse struct {
-	Data ttlchecker.CertificateInfo `json:"data"`
-}
+//
+// CHECK CERTIFICATE TTL
+//
 
-// @Summary Проверка сертификата
-// @Tags certificate
-// @Description Проверка сертификата
+// @Summary Проверить SSL сертификат
+// @Tags certificates
+// @Description Проверяет срок действия SSL сертификата сайта
 // @ID check-certificate
 // @Accept json
 // @Produce json
-// @Param url body checkCertificateInfoRequest true
+// @Param request body checkCertificateInfoRequest true "URL сайта"
+// @Success 200 {object} checkCertificateInfoResponse
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
 // @Security ApiKeyAuth
 // @Router /api/certificates/check [post]
 func (h *Handler) checkCertificate(c *gin.Context) {
@@ -165,7 +199,7 @@ func (h *Handler) checkCertificate(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, checkCetrificateInfoResponse{
+	c.JSON(http.StatusOK, checkCertificateInfoResponse{
 		Data: *certificateInfo,
 	})
 }

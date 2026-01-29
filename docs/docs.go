@@ -30,7 +30,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Просмотр всех сертификатов",
+                "description": "Возвращает список сертификатов пользователя",
                 "consumes": [
                     "application/json"
                 ],
@@ -38,11 +38,24 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "certificate"
+                    "certificates"
                 ],
-                "summary": "Просмотр сертификатов",
+                "summary": "Получить все сертификаты",
                 "operationId": "get-all-certificates",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.getAllCertificatesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/certificates/add": {
@@ -52,7 +65,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Добавление нового сертификата",
+                "description": "Добавляет новый сайт для отслеживания SSL сертификата",
                 "consumes": [
                     "application/json"
                 ],
@@ -60,14 +73,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "certificate"
+                    "certificates"
                 ],
-                "summary": "Добавление сертификата",
+                "summary": "Добавить сертификат",
                 "operationId": "add-certificate",
                 "parameters": [
                     {
-                        "description": "Данные пользователя",
-                        "name": "input",
+                        "description": "URL сайта",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -75,7 +88,29 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/certificates/check": {
@@ -85,7 +120,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Проверка сертификата",
+                "description": "Проверяет срок действия SSL сертификата сайта",
                 "consumes": [
                     "application/json"
                 ],
@@ -93,14 +128,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "certificate"
+                    "certificates"
                 ],
-                "summary": "Проверка сертификата",
+                "summary": "Проверить SSL сертификат",
                 "operationId": "check-certificate",
                 "parameters": [
                     {
-                        "description": "URL для проверки",
-                        "name": "url",
+                        "description": "URL сайта",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -108,7 +143,26 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.checkCertificateInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/certificates/{id}": {
@@ -118,7 +172,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Просмотр сертификата по id",
+                "description": "Возвращает сертификат по ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -126,9 +180,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "certificate"
+                    "certificates"
                 ],
-                "summary": "Просмотр сертификата",
+                "summary": "Получить сертификат",
                 "operationId": "get-certificate",
                 "parameters": [
                     {
@@ -139,7 +193,26 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.getCertificateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
             },
             "delete": {
                 "security": [
@@ -147,7 +220,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Просмотр сертификата по id",
+                "description": "Удаляет сертификат по ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -155,10 +228,10 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "certificate"
+                    "certificates"
                 ],
-                "summary": "Удаление сертификата",
-                "operationId": "get-certificate",
+                "summary": "Удалить сертификат",
+                "operationId": "delete-certificate",
                 "parameters": [
                     {
                         "type": "integer",
@@ -168,7 +241,29 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
             }
         },
         "/auth/sign-in": {
@@ -247,6 +342,81 @@ const docTemplate = `{
             ],
             "properties": {
                 "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.checkCertificateInfoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/ttlchecker.CertificateInfo"
+                }
+            }
+        },
+        "handler.errorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.getAllCertificatesResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ttlchecker.CertificateResponse"
+                    }
+                }
+            }
+        },
+        "handler.getCertificateResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/ttlchecker.CertificateResponse"
+                }
+            }
+        },
+        "ttlchecker.CertificateInfo": {
+            "type": "object",
+            "properties": {
+                "days_left": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "valid_from": {
+                    "type": "string"
+                },
+                "valid_to": {
+                    "type": "string"
+                }
+            }
+        },
+        "ttlchecker.CertificateResponse": {
+            "type": "object",
+            "properties": {
+                "days_left": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "valid_from": {
+                    "type": "string"
+                },
+                "valid_to": {
                     "type": "string"
                 }
             }
