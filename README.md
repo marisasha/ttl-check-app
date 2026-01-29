@@ -10,7 +10,7 @@ REST API сервис для проверки срока действия (TTL) 
 - PostgreSQL
 
 # Run with Docker
-1. Создать файл `.env`
+1. Создать файл `.env` с настройками для PostgreSQL
 
 ```.env
 DB_USERNAME={ username }
