@@ -1,4 +1,4 @@
-package ttlchecker
+package models
 
 import (
 	"time"

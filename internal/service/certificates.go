@@ -8,8 +8,8 @@ import (
 	"net/url"
 	"time"
 
-	ttlchecker "github.com/marisasha/ttl-check-app"
-	"github.com/marisasha/ttl-check-app/pkg/repository"
+	"github.com/marisasha/ttl-check-app/internal/models"
+	"github.com/marisasha/ttl-check-app/internal/repository"
 )
 
 type CertificateService struct {
@@ -20,7 +20,7 @@ func NewCertificateService(repos repository.Certificate) *CertificateService {
 	return &CertificateService{repos: repos}
 }
 
-func (s *CertificateService) AddCertificate(certificate *ttlchecker.Certificate) error {
+func (s *CertificateService) AddCertificate(certificate *models.Certificate) error {
 
 	validInfo, err := checkTTL(certificate.Url)
 	if err != nil {
@@ -32,16 +32,16 @@ func (s *CertificateService) AddCertificate(certificate *ttlchecker.Certificate)
 	return s.repos.AddCertificate(certificate)
 }
 
-func (s *CertificateService) GetAllCertificates(userId int) (*[]ttlchecker.CertificateResponse, error) {
+func (s *CertificateService) GetAllCertificates(userId int) (*[]models.CertificateResponse, error) {
 	certificatesWithoutDaysleft, err := s.repos.GetAllCertificates(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	certificates := make([]ttlchecker.CertificateResponse, len(*certificatesWithoutDaysleft))
+	certificates := make([]models.CertificateResponse, len(*certificatesWithoutDaysleft))
 
 	for i, c := range *certificatesWithoutDaysleft {
-		certificates[i] = ttlchecker.CertificateResponse{
+		certificates[i] = models.CertificateResponse{
 			Id:        c.Id,
 			UserId:    c.UserId,
 			Url:       c.Url,
@@ -54,13 +54,13 @@ func (s *CertificateService) GetAllCertificates(userId int) (*[]ttlchecker.Certi
 	return &certificates, nil
 }
 
-func (s *CertificateService) GetCertificateById(certificateId int) (*ttlchecker.CertificateResponse, error) {
+func (s *CertificateService) GetCertificateById(certificateId int) (*models.CertificateResponse, error) {
 	certificatesWithoutDaysleft, err := s.repos.GetCertificateById(certificateId)
 	if err != nil {
 		return nil, err
 	}
 
-	certificate := &ttlchecker.CertificateResponse{
+	certificate := &models.CertificateResponse{
 		Id:        certificatesWithoutDaysleft.Id,
 		UserId:    certificatesWithoutDaysleft.UserId,
 		Url:       certificatesWithoutDaysleft.Url,
@@ -75,11 +75,11 @@ func (s *CertificateService) DeleteCertificate(certificateId int) error {
 	return s.repos.DeleteCertificate(certificateId)
 }
 
-func (s *CertificateService) CheckCertificate(inputURL string) (*ttlchecker.CertificateInfo, error) {
+func (s *CertificateService) CheckCertificate(inputURL string) (*models.CertificateInfo, error) {
 	return checkTTL(inputURL)
 }
 
-func checkTTL(inputURL string) (*ttlchecker.CertificateInfo, error) {
+func checkTTL(inputURL string) (*models.CertificateInfo, error) {
 	parsedURL, err := url.Parse(inputURL)
 	if err != nil {
 		return nil, errors.New("invalid url")
@@ -126,7 +126,7 @@ func checkTTL(inputURL string) (*ttlchecker.CertificateInfo, error) {
 
 	daysLeft := getDaysLeft(cert.NotAfter)
 
-	return &ttlchecker.CertificateInfo{
+	return &models.CertificateInfo{
 		URL:       inputURL,
 		ValidFrom: cert.NotBefore,
 		ValidTo:   cert.NotAfter,

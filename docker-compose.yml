@@ -40,7 +40,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./schema:/migrations
+      - ./migrations:/migrations
     entrypoint: [
       "migrate",
       "-path", "/migrations",

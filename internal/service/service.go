@@ -1,22 +1,22 @@
 package service
 
 import (
-	ttlchecker "github.com/marisasha/ttl-check-app"
-	"github.com/marisasha/ttl-check-app/pkg/repository"
+	"github.com/marisasha/ttl-check-app/internal/models"
+	"github.com/marisasha/ttl-check-app/internal/repository"
 )
 
 type Authorization interface {
-	CreateUser(user *ttlchecker.User) (int, error)
+	CreateUser(user *models.User) (int, error)
 	GenerateToken(username, password string) (string, error)
 	ParseToken(token string) (int, error)
 }
 
 type Certificate interface {
-	GetAllCertificates(userId int) (*[]ttlchecker.CertificateResponse, error)
-	GetCertificateById(certificateId int) (*ttlchecker.CertificateResponse, error)
-	AddCertificate(certificate *ttlchecker.Certificate) error
+	GetAllCertificates(userId int) (*[]models.CertificateResponse, error)
+	GetCertificateById(certificateId int) (*models.CertificateResponse, error)
+	AddCertificate(certificate *models.Certificate) error
 	DeleteCertificate(certificateId int) error
-	CheckCertificate(inputUrl string) (*ttlchecker.CertificateInfo, error)
+	CheckCertificate(inputUrl string) (*models.CertificateInfo, error)
 }
 
 type Service struct {

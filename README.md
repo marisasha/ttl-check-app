@@ -13,20 +13,32 @@ REST API сервис для проверки срока действия (TTL) 
 1. Создать файл `.env` с настройками для PostgreSQL
 
 ```.env
-DB_USERNAME={ username }
-DB_PASSWORD={ password }
-DB_HOST={ host } //пользуйтесь db для Docker
-DB_PORT={ port }
-DB_NAME={ name }
-DB_SSLMODE={ sslmode }
+DB_USERNAME= postgres
+DB_PASSWORD= postgres // можно любой другой
+DB_HOST= db 
+DB_PORT= 5432
+DB_NAME= ttl-checker // можно любое другое
+DB_SSLMODE= disable
 ```
+2. Создать в корне папку `config` , а внутри папки файл `config.yaml`
 
-2. Запустить проект
+```config.yaml
+port: "8000"
+
+db:
+  host: "db"
+  port: "5432"
+  username: "postgres"
+  password: "postgres"
+  dbname: "ttl-checker"
+  sslmode: "disable"
+```
+3. Запустить проект
 ```
 docker compose up --build
 ```
 
-3. Использовать api
+4. Использовать api
 ```
 http://localhost:8000/swagger/index.html
 ```
@@ -40,7 +52,7 @@ SQL-файлы находятся в папке: schema
 
 - **cmd** — точка входа (main.go)  
 - **pkg** — бизнес-логика (handler, service, repository)  
-- **schema** — SQL миграции  
+- **migrations** — SQL миграции  
 - **docs** — Swagger документация  
 - **configs** — конфигурационные файлы  
 - **Dockerfile**  

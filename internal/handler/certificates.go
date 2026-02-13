@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	ttlchecker "github.com/marisasha/ttl-check-app"
+	"github.com/marisasha/ttl-check-app/internal/models"
 )
 
 type AddCertificateRequest struct {
@@ -13,11 +13,11 @@ type AddCertificateRequest struct {
 }
 
 type getAllCertificatesResponse struct {
-	Data []ttlchecker.CertificateResponse `json:"data"`
+	Data []models.CertificateResponse `json:"data"`
 }
 
 type getCertificateResponse struct {
-	Data ttlchecker.CertificateResponse `json:"data"`
+	Data models.CertificateResponse `json:"data"`
 }
 
 type checkCertificateInfoRequest struct {
@@ -25,7 +25,7 @@ type checkCertificateInfoRequest struct {
 }
 
 type checkCertificateInfoResponse struct {
-	Data ttlchecker.CertificateInfo `json:"data"`
+	Data models.CertificateInfo `json:"data"`
 }
 
 //
@@ -56,7 +56,7 @@ func (h *Handler) addCertificate(c *gin.Context) {
 		return
 	}
 
-	newCertificate := &ttlchecker.Certificate{
+	newCertificate := &models.Certificate{
 		UserId: userId,
 		Url:    input.Url,
 	}
@@ -147,9 +147,6 @@ func (h *Handler) getCertificate(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "ID сертификата"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} errorResponse
-// @Failure 500 {object} errorResponse
 // @Security ApiKeyAuth
 // @Router /api/certificates/{id} [delete]
 func (h *Handler) deleteCertificate(c *gin.Context) {

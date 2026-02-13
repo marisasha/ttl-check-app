@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	ttlchecker "github.com/marisasha/ttl-check-app"
-	"github.com/marisasha/ttl-check-app/pkg/repository"
+	"github.com/marisasha/ttl-check-app/internal/models"
+	"github.com/marisasha/ttl-check-app/internal/repository"
 )
 
 const (
@@ -30,7 +30,7 @@ func NewAuthService(repos repository.Authorization) *AuthService {
 	return &AuthService{repos: repos}
 }
 
-func (s *AuthService) CreateUser(user *ttlchecker.User) (int, error) {
+func (s *AuthService) CreateUser(user *models.User) (int, error) {
 	user.Password = generatePasswordHash(user.Password)
 	return s.repos.CreateUser(user)
 }

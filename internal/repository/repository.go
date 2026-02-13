@@ -2,18 +2,18 @@ package repository
 
 import (
 	"github.com/jmoiron/sqlx"
-	ttlchecker "github.com/marisasha/ttl-check-app"
+	"github.com/marisasha/ttl-check-app/internal/models"
 )
 
 type Authorization interface {
-	CreateUser(user *ttlchecker.User) (int, error)
-	GetUser(username, password string) (ttlchecker.User, error)
+	CreateUser(user *models.User) (int, error)
+	GetUser(username, password string) (models.User, error)
 }
 
 type Certificate interface {
-	GetAllCertificates(userId int) (*[]ttlchecker.Certificate, error)
-	GetCertificateById(certificateId int) (*ttlchecker.Certificate, error)
-	AddCertificate(certificate *ttlchecker.Certificate) error
+	GetAllCertificates(userId int) (*[]models.Certificate, error)
+	GetCertificateById(certificateId int) (*models.Certificate, error)
+	AddCertificate(certificate *models.Certificate) error
 	DeleteCertificate(certificateId int) error
 }
 
